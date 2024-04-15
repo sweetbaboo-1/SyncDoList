@@ -3,129 +3,85 @@ package sweetbaboo.syncdolist.gui;
 
 import java.util.Collections;
 import java.util.List;
+
 import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.IConfigBase;
+import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fi.dy.masa.malilib.util.StringUtils;
 import sweetbaboo.syncdolist.Reference;
-import sweetbaboo.syncdolist.config.Configs;
 import sweetbaboo.syncdolist.config.Hotkeys;
 
-public class GuiConfigs extends GuiConfigsBase
-{
-  private static ConfigGuiTab tab = ConfigGuiTab.GENERIC;
+public class GuiConfigs extends GuiConfigsBase {
+  private static ConfigGuiTab configTab=ConfigGuiTab.BACK;
 
-  public GuiConfigs()
-  {
-    super(10, 50, Reference.MOD_ID, null, "itemscroller.gui.title.configs");
+
+
+  public GuiConfigs() {
+    super(10, 50, Reference.MOD_ID, null, "syncdolist.gui.button.config_gui.hotkeys");
   }
 
   @Override
-  public void initGui()
-  {
+  public void initGui() {
     super.initGui();
     this.clearOptions();
 
-    int x = 10;
-    int y = 26;
+    int x=10;
+    int y=26;
 
-    for (ConfigGuiTab tab : ConfigGuiTab.VALUES)
-    {
-      x += this.createButton(x, y, -1, tab);
+    for (ConfigGuiTab tab : ConfigGuiTab.VALUES) {
+      x+=this.createButton(x, y, -1, tab);
     }
   }
 
-  private int createButton(int x, int y, int width, ConfigGuiTab tab)
-  {
-    ButtonGeneric button = new ButtonGeneric(x, y, width, 20, tab.getDisplayName());
-    button.setEnabled(GuiConfigs.tab != tab);
-    this.addButton(button, new ButtonListener(tab, this));
-
+  private int createButton(int x, int y, int width, ConfigGuiTab tab) {
+    ButtonGeneric button=new ButtonGeneric(x, y, width, 20, tab.getDisplayName());
+    button.setEnabled(true);
+    this.addButton(button, new ButtonListener());
     return button.getWidth() + 2;
   }
 
   @Override
-  protected int getConfigWidth()
-  {
-    ConfigGuiTab tab = GuiConfigs.tab;
-
-    if (tab == ConfigGuiTab.GENERIC || tab == ConfigGuiTab.TOGGLES)
-    {
-      return 100;
-    }
-
+  protected int getConfigWidth() {
     return super.getConfigWidth();
   }
 
   @Override
-  public List<ConfigOptionWrapper> getConfigs()
-  {
+  public List<ConfigOptionWrapper> getConfigs() {
     List<? extends IConfigBase> configs;
-    ConfigGuiTab tab = GuiConfigs.tab;
+    ConfigGuiTab tab=GuiConfigs.configTab;
 
-    if (tab == ConfigGuiTab.GENERIC)
-    {
-      configs = Configs.Generic.OPTIONS;
-    }
-    else if (tab == ConfigGuiTab.TOGGLES)
-    {
-      configs = Configs.Toggles.OPTIONS;
-    }
-    else if (tab == ConfigGuiTab.HOTKEYS)
-    {
-      configs = Hotkeys.HOTKEY_LIST;
-    }
-    else
-    {
+    if (tab == ConfigGuiTab.BACK) {
+      configs=Hotkeys.HOTKEY_LIST;
+    } else {
       return Collections.emptyList();
     }
 
     return ConfigOptionWrapper.createFor(configs);
   }
 
-  private static class ButtonListener implements IButtonActionListener
-  {
-    private final GuiConfigs parent;
-    private final ConfigGuiTab tab;
+  public enum ConfigGuiTab {
+    BACK("syncdolist.gui.button.config_gui.back");
 
-    public ButtonListener(ConfigGuiTab tab, GuiConfigs parent)
-    {
-      this.tab = tab;
-      this.parent = parent;
+    public static final ImmutableList<ConfigGuiTab> VALUES=ImmutableList.copyOf(values());
+    private final String translationKey;
+
+    ConfigGuiTab(String translationKey) {
+      this.translationKey=translationKey;
     }
 
-    @Override
-    public void actionPerformedWithButton(ButtonBase button, int mouseButton)
-    {
-      GuiConfigs.tab = this.tab;
-
-      this.parent.reCreateListWidget(); // apply the new config width
-      this.parent.getListWidget().resetScrollbarPosition();
-      this.parent.initGui();
+    public String getDisplayName() {
+      return StringUtils.translate(this.translationKey);
     }
   }
 
-  public enum ConfigGuiTab
-  {
-    GENERIC ("itemscroller.gui.button.config_gui.generic"),
-    TOGGLES ("itemscroller.gui.button.config_gui.toggles"),
-    HOTKEYS ("itemscroller.gui.button.config_gui.hotkeys");
-
-    private final String translationKey;
-
-    public static final ImmutableList<ConfigGuiTab> VALUES = ImmutableList.copyOf(values());
-
-    ConfigGuiTab(String translationKey)
-    {
-      this.translationKey = translationKey;
-    }
-
-    public String getDisplayName()
-    {
-      return StringUtils.translate(this.translationKey);
+  private static class ButtonListener implements IButtonActionListener {
+    @Override
+    public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
+      GuiBase.openGui(new GuiMainMenu());
     }
   }
 }

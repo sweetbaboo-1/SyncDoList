@@ -1,0 +1,13 @@
+{
+  "syncdolist.gui.button.config_gui.todolist": "TODO List",
+  "syncdolist.gui.button.config_gui.hotkeys": "Hotkeys",
+  "syncdolist.gui.button.config_gui.additem": "Add Item",
+  "syncdolist.gui.button.config_gui.deletetem": "Delete Item",
+  "syncdolist.gui.button.config_gui.edititem": "Edit Item",
+  "syncdolist.gui.title.main_menu": "SyncDoList",
+  "syncdolist.gui.button.config_gui.back": "Back",
+  "syncdolist.gui.button.change_menu.edit_task": "Edit Task",
+  "syncdolist.gui.button.change_menu.add_task": "Add Task",
+  "syncdolist.gui.button.change_menu.delete_task": "Delete Task",
+  "syncdolist.gui.button.change_menu.config_menu": "Configuration"
+}

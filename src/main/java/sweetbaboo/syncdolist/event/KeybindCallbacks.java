@@ -2,24 +2,15 @@ package sweetbaboo.syncdolist.event;
 
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.recipe.CraftingRecipe;
-import net.minecraft.screen.slot.Slot;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.gui.Message;
 import fi.dy.masa.malilib.hotkeys.IHotkeyCallback;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
-import fi.dy.masa.malilib.hotkeys.KeyCallbackToggleBooleanConfigWithMessage;
 import fi.dy.masa.malilib.interfaces.IClientTickHandler;
-import fi.dy.masa.malilib.util.GuiUtils;
-import fi.dy.masa.malilib.util.InfoUtils;
-import sweetbaboo.syncdolist.config.Configs;
 import sweetbaboo.syncdolist.config.Hotkeys;
 import sweetbaboo.syncdolist.gui.GuiConfigs;
+import sweetbaboo.syncdolist.gui.GuiMainMenu;
 
 public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler {
   private static final KeybindCallbacks INSTANCE = new KeybindCallbacks();
@@ -50,8 +41,8 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler {
       return false;
     }
 
-    if (key == Hotkeys.OPEN_CONFIG_GUI.getKeybind()) {
-      GuiBase.openGui(new GuiConfigs());
+    if (key == Hotkeys.OPEN_TODO_LIST.getKeybind()) {
+      GuiBase.openGui(new GuiMainMenu());
       return true;
     }
     return false;
