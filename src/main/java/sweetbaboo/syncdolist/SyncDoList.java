@@ -16,3 +16,10 @@ public class SyncDoList implements ModInitializer {
 		InitializationHandler.getInstance().registerInitializationHandler(new InitHandler());
 	}
 }
+
+/*
+ * Feature to be able to add some note to each step i.e. "The mats are in a chest"
+ * Syncing waypoints to a map.
+ * Discord integration. Look at defnot's mod Kiwitech admin
+ * Priority ranking
+ */
