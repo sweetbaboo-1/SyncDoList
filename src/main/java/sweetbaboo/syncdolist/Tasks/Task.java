@@ -3,7 +3,6 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.player.PlayerEntity;
 import sweetbaboo.syncdolist.SyncDoList;
 
 import java.io.File;
@@ -24,19 +23,24 @@ public class Task {
   public boolean completed;
   public List<Step> steps;
   public String[] notes;
-  public PlayerEntity[] workers;
 
-  public Task(String name, String author, Date creationDate, boolean completed, List<Step> steps, String[] notes, PlayerEntity[] workers) {
+  public Task(String name, String author, Date creationDate, boolean completed, List<Step> steps, String[] notes) {
     this.name=name;
     this.author=author;
     this.creationDate = creationDate;
     this.completed=completed;
     this.steps=steps;
     this.notes = notes;
-    this.workers=workers;
   }
 
   public static boolean toJson(List<Task> tasks) {
+    if (!SAVE_PATH.exists()) {
+      if (!SAVE_PATH.mkdirs()) {
+        SyncDoList.logger.error("Failed to create directory: %s".formatted(SAVE_PATH));
+        return false;
+      }
+    }
+
     try (FileWriter writer = new FileWriter(SAVE_PATH + File.separator + FILENAME)) {
       GSON.toJson(tasks, writer);
       return true;

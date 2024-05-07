@@ -41,11 +41,11 @@ public class WidgetColorfulStringListEntry extends WidgetStringListEntry {
     this.drawStringWithShadow(this.x + 2, this.y + yOffset, color, this.entry, drawContext);
   }
 
-  public int getColor() {
-    return color;
-  }
-
   public void setColor(int color) {
     this.color=color;
+  }
+
+  public void setPos(int i) {
+    this.setY(i);
   }
 }

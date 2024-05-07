@@ -16,6 +16,7 @@ import sweetbaboo.syncdolist.widgets.WidgetExpandableTask;
 import sweetbaboo.syncdolist.widgets.WidgetTaskStep;
 import sweetbaboo.syncdolist.widgets.wtest;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,28 +35,44 @@ public class GuiMainMenu extends GuiBase {
   public GuiMainMenu() {
     String version=String.format("v%s", Reference.MOD_VERSION);
     this.title=StringUtils.translate("syncdolist.gui.title.main_menu", version);
-    tasks.add(new Task("Build Ice Farm", "SweetBaboo", new Date(), false, new ArrayList<>() {{
-      add(new Step("Storage", false));
-      add(new Step("Deco", false));
-      add(new Step("Farm", false));
-    }}, new String[]{"Note 1", "Note 2", "Note 3"}, new PlayerEntity[]{}));
 
-//    tasks.add(new Task("Build Bonemeal Farm", "SweetBaboo", new Date(), false, new String[] {"Storage", "Farm", "Deco"}, new String[] {"Note 1", "Note 2", "Note 3"}, new PlayerEntity[]{}));
-//    tasks.add(new Task("Build New Storage", "SweetBaboo", new Date(), false, new String[] {"Storage", "Haul Items", "Deco"}, new String[] {"Note 1", "Note 2", "Note 3"}, new PlayerEntity[]{}));
-//    tasks.add(new Task("Party", "SweetBaboo", new Date(), false, new String[] {"Candles", "Cake", "Balloons"}, new String[] {"Note 1", "Note 2", "Note 3"}, new PlayerEntity[]{}));
+//    tasks.add(new Task("Build Ice Farm", "SweetBaboo", new Date(), false, new ArrayList<Step>() {{
+//      add(new Step("Storage", false));
+//      add(new Step("Deco", false));
+//      add(new Step("Farm", false));
+//    }}, new String[]{"Note 1", "Note 2", "Note 3"}));
+//
+//    tasks.add(new Task("Create Presentation", "John Doe", new Date(), false, new ArrayList<Step>() {{
+//      add(new Step("Research", false));
+//      add(new Step("Outline", false));
+//      add(new Step("Design Slides", false));
+//      add(new Step("Practice", false));
+//    }}, new String[]{"Note 1", "Note 2"}));
+//
+//    tasks.add(new Task("Plan Vacation", "Alice", new Date(), false, new ArrayList<Step>() {{
+//      add(new Step("Choose Destination", false));
+//      add(new Step("Book Flights", false));
+//      add(new Step("Book Accommodation", false));
+//      add(new Step("Plan Activities", false));
+//    }}, new String[]{"Note 1"}));
+//
+//    tasks.add(new Task("Write Report", "Emma", new Date(), false, new ArrayList<Step>() {{
+//      add(new Step("Gather Data", false));
+//      add(new Step("Analyze Data", false));
+//      add(new Step("Write Draft", false));
+//      add(new Step("Revise", false));
+//      add(new Step("Finalize", false));
+//    }}, new String[]{"Note 1", "Note 2", "Note 3", "Note 4"}));
+
     widgets=new ArrayList<>();
   }
 
   @Override
   public void initGui() {
     super.initGui();
+    tasks = Task.readTasksFromFile(Task.SAVE_PATH + File.separator + Task.FILENAME);
     genButtons();
     genTasks();
-//    wtest test=new wtest(180, 180, 20, 20);
-//    this.addWidget(test);
-//    for (WidgetExpandableTask task : widgets) {
-//      this.addWidget(task);
-//    }
   }
 
   @Override
@@ -81,21 +98,20 @@ public class GuiMainMenu extends GuiBase {
     this.createChangeMenuButton(x, y, width, ButtonListener.ButtonType.EDIT_TASK);
   }
 
-//  @Override
-//  public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
-//    this.clearWidgets();
-//    wtest test = new wtest(200, 200,1,1);
-//    this.addWidget(test);
-//    WidgetExpandableTask prev = null;
-//    for (WidgetExpandableTask task : widgets) {
-//      if (prev != null) {
-//        task.setPos(prev.getHeight() + prev.getY());
-//      }
-//      this.addWidget(task);
-//      prev = task;
-//    }
-//    super.render(drawContext, mouseX, mouseY, partialTicks);
-//  }
+  @Override
+  public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+    this.clearWidgets();
+    WidgetExpandableTask prev = null;
+    for (WidgetExpandableTask task : widgets) {
+      if (prev != null) {
+        int newY = prev.getHeight() + prev.getY();
+        task.setPos(newY);
+      }
+      this.addWidget(task);
+      prev = task;
+    }
+    super.render(drawContext, mouseX, mouseY, partialTicks);
+  }
 
   private void genTasks() {
     int taskWidth=getTaskWidth();

@@ -1,7 +1,6 @@
 package sweetbaboo.syncdolist.widgets;
 
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
-import fi.dy.masa.malilib.gui.widgets.WidgetCheckBox;
 import fi.dy.masa.malilib.gui.widgets.WidgetContainer;
 import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
@@ -23,11 +22,10 @@ public class WidgetExpandableTask extends WidgetContainer {
   private List<WidgetColorfulStringListEntry> steps;
   private boolean isOdd;
   private int defaultHeight;
-  private int height;
   private WidgetColorfulStringListEntry entry;
 
   public WidgetExpandableTask(int x, int y, int width, int height, @NotNull Task task, boolean isOdd) {
-    super(x, y, width, height * 4);
+    super(x, y, width, height * (task.steps.size() + 1));
     this.isOdd = isOdd;
     this.task = task;
     this.height = height;
@@ -62,10 +60,7 @@ public class WidgetExpandableTask extends WidgetContainer {
     } else {
       i--;
       task.steps.get(i).setCompleted(!task.steps.get(i).isCompleted());
-      this.subWidgets.clear();
-      genSteps();
-      this.subWidgets.addAll(steps);
-      this.subWidgets.add(entry);
+      steps.get(i).setColor(task.steps.get(i).isCompleted() ? GuiMainMenu.COLOR_GREEN : GuiMainMenu.COLOR_RED);
     }
     entry.color = expanded ? GuiMainMenu.COLOR_LIGHT_BLUE : GuiMainMenu.COLOR_WHITE;
     this.height = getHeight();
@@ -87,15 +82,15 @@ public class WidgetExpandableTask extends WidgetContainer {
     }
   }
 
-//  public void setPos(int newPos) {
-//    this.y = newPos;
-//    this.entry.setY(this.y);
-//    int h = this.height;
-//    for (WidgetColorfulStringListEntry step : steps) {
-//      step.setPos(this.y + h);
-//      h += this.height;
-//    }
-//  }
+  public void setPos(int newPos) {
+    this.y = newPos;
+    this.entry.setY(this.y);
+    int h = defaultHeight;
+    for (WidgetColorfulStringListEntry step : steps) {
+      step.setPos(this.y + h);
+      h += defaultHeight;
+    }
+  }
 
   public boolean isExpanded() {
     return expanded;
@@ -107,6 +102,6 @@ public class WidgetExpandableTask extends WidgetContainer {
 
   @Override
   public int getHeight() {
-    return isExpanded() ? height + height * task.steps.size() : defaultHeight;
+    return isExpanded() ? defaultHeight + defaultHeight * task.steps.size() : defaultHeight;
   }
 }
