@@ -15,6 +15,7 @@ import sweetbaboo.syncdolist.gui.Icons;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class WidgetListExpandableTasks extends WidgetListBase<Task, WidgetExpandableTask> {
 
@@ -48,6 +49,13 @@ public class WidgetListExpandableTasks extends WidgetListBase<Task, WidgetExpand
   }
 
   @Override
+  public boolean onMouseClicked(int mouseX, int mouseY, int mouseButton) {
+    boolean result = super.onMouseClicked(mouseX, mouseY, mouseButton);
+    this.reCreateListEntryWidgets();
+    return result;
+  }
+
+  @Override
   protected void reCreateListEntryWidgets() {
     List<WidgetExpandableTask> copy = new ArrayList<>(this.listWidgets);
     this.listWidgets.clear();
@@ -78,8 +86,13 @@ public class WidgetListExpandableTasks extends WidgetListBase<Task, WidgetExpand
         break;
       }
 
+      // puke... this was done because the incorrect widgets were being recreated.
       if (copy.size() > index) {
-        widget.recreate(copy.get(index).isExpanded());
+        for (var item : copy) {
+          if (Objects.equals(Objects.requireNonNull(item.getEntry()).name, Objects.requireNonNull(widget.getEntry()).name)) {
+            widget.recreate(item.isExpanded());
+          }
+        }
       }
 
       this.listWidgets.add(widget);

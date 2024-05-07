@@ -1,12 +1,10 @@
 package sweetbaboo.syncdolist.widgets;
 
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
-import fi.dy.masa.malilib.gui.widgets.WidgetContainer;
 import fi.dy.masa.malilib.gui.widgets.WidgetListEntryBase;
 import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import sweetbaboo.syncdolist.Tasks.Task;
 import sweetbaboo.syncdolist.gui.GuiMainMenu;
 import sweetbaboo.syncdolist.gui.Icons;
@@ -108,6 +106,10 @@ public class WidgetExpandableTask extends WidgetListEntryBase<Task> {
     setPos(this.y);
     entry.setColor(this.isExpanded() ? GuiMainMenu.COLOR_LIGHT_BLUE : GuiMainMenu.COLOR_WHITE);
     this.height = getHeight();
+  }
+
+  public List<WidgetColorfulStringListEntry> getSteps() {
+    return steps;
   }
 
   @Override
