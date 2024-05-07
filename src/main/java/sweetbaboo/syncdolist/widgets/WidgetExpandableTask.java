@@ -2,9 +2,11 @@ package sweetbaboo.syncdolist.widgets;
 
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.gui.widgets.WidgetContainer;
+import fi.dy.masa.malilib.gui.widgets.WidgetListEntryBase;
 import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import sweetbaboo.syncdolist.Tasks.Task;
 import sweetbaboo.syncdolist.gui.GuiMainMenu;
 import sweetbaboo.syncdolist.gui.Icons;
@@ -12,7 +14,7 @@ import sweetbaboo.syncdolist.gui.Icons;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WidgetExpandableTask extends WidgetContainer {
+public class WidgetExpandableTask extends WidgetListEntryBase<Task> {
 
   private static final IGuiIcon ICON_EXPANDED = Icons.ARROW_DOWN;
   private static final IGuiIcon ICON_UNEXPANDED = Icons.ARROW_UP;
@@ -24,8 +26,8 @@ public class WidgetExpandableTask extends WidgetContainer {
   private int defaultHeight;
   private WidgetColorfulStringListEntry entry;
 
-  public WidgetExpandableTask(int x, int y, int width, int height, @NotNull Task task, boolean isOdd) {
-    super(x, y, width, height * (task.steps.size() + 1));
+  public WidgetExpandableTask(int x, int y, int width, int height, @NotNull Task task, boolean isOdd, int listIndex) {
+    super(x, y, width, height * (task.steps.size() + 1), task, listIndex);
     this.isOdd = isOdd;
     this.task = task;
     this.height = height;
@@ -57,6 +59,7 @@ public class WidgetExpandableTask extends WidgetContainer {
     int i = (mouseY - y) / defaultHeight;
     if (i == 0) {
       setExpanded(!isExpanded());
+      task.setExpanded(isExpanded());
     } else {
       i--;
       task.steps.get(i).setCompleted(!task.steps.get(i).isCompleted());
@@ -65,6 +68,16 @@ public class WidgetExpandableTask extends WidgetContainer {
     entry.color = expanded ? GuiMainMenu.COLOR_LIGHT_BLUE : GuiMainMenu.COLOR_WHITE;
     this.height = getHeight();
     return super.onMouseClicked(mouseX, mouseY, mouseButton);
+  }
+
+  public void setPos(int newPos) {
+    this.y = newPos;
+    this.entry.setY(this.y);
+    int h = defaultHeight;
+    for (WidgetColorfulStringListEntry step : steps) {
+      step.setPos(this.y + h);
+      h += defaultHeight;
+    }
   }
 
   @Override
@@ -82,22 +95,19 @@ public class WidgetExpandableTask extends WidgetContainer {
     }
   }
 
-  public void setPos(int newPos) {
-    this.y = newPos;
-    this.entry.setY(this.y);
-    int h = defaultHeight;
-    for (WidgetColorfulStringListEntry step : steps) {
-      step.setPos(this.y + h);
-      h += defaultHeight;
-    }
-  }
-
   public boolean isExpanded() {
     return expanded;
   }
 
   public void setExpanded(boolean expanded) {
     this.expanded=expanded;
+  }
+
+  public void recreate(boolean expanded) {
+    setExpanded(expanded);
+    setPos(this.y);
+    entry.setColor(this.isExpanded() ? GuiMainMenu.COLOR_LIGHT_BLUE : GuiMainMenu.COLOR_WHITE);
+    this.height = getHeight();
   }
 
   @Override

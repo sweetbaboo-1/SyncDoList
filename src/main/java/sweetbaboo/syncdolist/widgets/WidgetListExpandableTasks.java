@@ -1,0 +1,154 @@
+package sweetbaboo.syncdolist.widgets;
+
+import com.google.common.collect.ImmutableList;
+import fi.dy.masa.malilib.gui.LeftRight;
+import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
+import fi.dy.masa.malilib.gui.widgets.WidgetBase;
+import fi.dy.masa.malilib.gui.widgets.WidgetListBase;
+import fi.dy.masa.malilib.gui.widgets.WidgetSearchBar;
+import fi.dy.masa.malilib.render.RenderUtils;
+import net.minecraft.client.gui.DrawContext;
+import org.jetbrains.annotations.Nullable;
+import sweetbaboo.syncdolist.Tasks.Task;
+import sweetbaboo.syncdolist.gui.Icons;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+public class WidgetListExpandableTasks extends WidgetListBase<Task, WidgetExpandableTask> {
+
+
+  public WidgetListExpandableTasks(int x, int y, int width, int height, @Nullable ISelectionListener<Task> selectionListener) {
+    super(x, y, width, height, selectionListener);
+    this.browserEntryHeight = 22;
+    this.widgetSearchBar = new WidgetSearchBar(x + 2, y + 4, width - 14, 14, 0, Icons.FILE_ICON_SEARCH, LeftRight.LEFT);
+    this.browserEntriesOffsetY = this.widgetSearchBar.getHeight() + 3;
+  }
+
+  @Override
+  protected WidgetExpandableTask createListEntryWidget(int x, int y, int listIndex, boolean isOdd, Task entry) {
+    return new WidgetExpandableTask(x, y, this.browserEntryWidth, this.getBrowserEntryHeightFor(entry), entry, isOdd, listIndex);
+  }
+
+  @Override
+  protected Collection<Task> getAllEntries() {
+    List<Task> tasks = Task.readTasksFromFile();
+    if (tasks == null)
+      return super.getAllEntries();
+    return Task.readTasksFromFile();
+  }
+
+  @Override
+  protected List<String> getEntryStringsForFilter(Task entry) {
+    if (entry.name != null) {
+      return ImmutableList.of(entry.name.toLowerCase());
+    }
+    return super.getEntryStringsForFilter(entry);
+  }
+
+  @Override
+  protected void reCreateListEntryWidgets() {
+    List<WidgetExpandableTask> copy = new ArrayList<>(this.listWidgets);
+    this.listWidgets.clear();
+    this.maxVisibleBrowserEntries = 0;
+
+    final int numEntries = this.listContents.size();
+    int usableHeight = this.browserHeight - this.browserPaddingY - this.browserEntriesOffsetY;
+    int usedHeight = 0;
+    int x = this.posX + 2;
+    int y = this.posY + 4 + this.browserEntriesOffsetY;
+    int index = this.scrollBar.getValue();
+    var widget = this.createHeaderWidget(x, y, index, usableHeight, usedHeight);
+
+    if (widget != null)
+    {
+      this.listWidgets.add(widget);
+
+      usedHeight += widget.getHeight();
+      y += widget.getHeight();
+    }
+
+    for ( ; index < numEntries; ++index)
+    {
+      widget = this.createListEntryWidgetIfSpace(x, y, index, usableHeight, usedHeight);
+
+      if (widget == null)
+      {
+        break;
+      }
+
+      if (copy.size() > index) {
+        widget.recreate(copy.get(index).isExpanded());
+      }
+
+      this.listWidgets.add(widget);
+      this.maxVisibleBrowserEntries++;
+
+      usedHeight += widget.getHeight();
+      y += widget.getHeight();
+    }
+
+    this.scrollBar.setMaxValue(this.listContents.size() - this.maxVisibleBrowserEntries);
+  }
+
+  @Override
+  public void drawContents(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+    RenderUtils.color(1f, 1f, 1f, 1f);
+
+    if (this.widgetSearchBar != null)
+    {
+      this.widgetSearchBar.render(mouseX, mouseY, false, drawContext);
+    }
+
+    WidgetBase hovered = null;
+    int scrollbarHeight = this.browserHeight - this.browserEntriesOffsetY - 8;
+    int totalHeight = 0;
+
+    for (var listContent : this.listContents)
+    {
+      totalHeight += this.getBrowserEntryHeightFor(listContent);
+    }
+
+    totalHeight = Math.max(totalHeight, scrollbarHeight);
+
+    int scrollBarX = this.posX + this.browserWidth - 9;
+    int scrollBarY = this.browserEntriesStartY + this.browserEntriesOffsetY;
+    this.scrollBar.render(mouseX, mouseY, partialTicks, scrollBarX, scrollBarY, 8, scrollbarHeight, totalHeight);
+
+    // The value gets updated in the drawScrollBar() method above, if dragging
+    if (this.scrollBar.getValue() != this.lastScrollbarPosition)
+    {
+      this.lastScrollbarPosition = this.scrollBar.getValue();
+      this.reCreateListEntryWidgets();
+    }
+
+    // Draw the currently visible directory entries
+    WidgetExpandableTask prev = null;
+    for (var widget : this.listWidgets)
+    {
+      if (prev != null) {
+        widget.setPos(prev.getY() + prev.getHeight());
+      }
+      prev = widget;
+
+      var entry = widget.getEntry();
+      boolean isSelected = this.allowMultiSelection ? this.selectedEntries.contains(entry) : entry != null && entry.equals(this.getLastSelectedEntry());
+      widget.render(mouseX, mouseY, isSelected, drawContext);
+
+      if (widget.isMouseOver(mouseX, mouseY))
+      {
+        hovered = widget;
+      }
+    }
+
+    if (hovered == null && this.widgetSearchBar != null && this.widgetSearchBar.isMouseOver(mouseX, mouseY))
+    {
+      hovered = this.widgetSearchBar;
+    }
+
+    this.hoveredWidget = hovered;
+
+    RenderUtils.color(1f, 1f, 1f, 1f);
+  }
+}

@@ -23,6 +23,7 @@ public class Task {
   public boolean completed;
   public List<Step> steps;
   public String[] notes;
+  public boolean isExpanded;
 
   public Task(String name, String author, Date creationDate, boolean completed, List<Step> steps, String[] notes) {
     this.name=name;
@@ -31,6 +32,7 @@ public class Task {
     this.completed=completed;
     this.steps=steps;
     this.notes = notes;
+    this.isExpanded = false;
   }
 
   public static boolean toJson(List<Task> tasks) {
@@ -50,13 +52,22 @@ public class Task {
     }
   }
 
-  public static List<Task> readTasksFromFile(String filePath) {
+  public static List<Task> readTasksFromFile() {
+    String filePath = SAVE_PATH + File.separator + FILENAME;
     try (FileReader fileReader = new FileReader(filePath)) {
       return GSON.fromJson(fileReader, new TypeToken<List<Task>>(){}.getType());
     } catch (IOException e) {
       e.printStackTrace();
       return null;
     }
+  }
+
+  public boolean isExpanded() {
+    return isExpanded;
+  }
+
+  public void setExpanded(boolean expanded) {
+    isExpanded=expanded;
   }
 
   @Override
