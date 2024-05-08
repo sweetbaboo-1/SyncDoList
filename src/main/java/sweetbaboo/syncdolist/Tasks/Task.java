@@ -50,7 +50,7 @@ public class Task extends Entry{
       return GSON.fromJson(fileReader, new TypeToken<List<Entry>>(){}.getType());
     } catch (IOException e) {
       e.printStackTrace();
-      return new ArrayList<>();
+      return null;
     }
   }
 

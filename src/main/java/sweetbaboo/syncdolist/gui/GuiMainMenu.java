@@ -12,14 +12,14 @@ import sweetbaboo.syncdolist.Reference;
 import sweetbaboo.syncdolist.Tasks.Entry;
 import sweetbaboo.syncdolist.Tasks.Step;
 import sweetbaboo.syncdolist.Tasks.Task;
-import sweetbaboo.syncdolist.widgets.WidgetListExpandableTasks;
+import sweetbaboo.syncdolist.widgets.WidgetListTasks;
 import sweetbaboo.syncdolist.widgets.WidgetListItem;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class GuiMainMenu extends GuiListBase<Entry, WidgetListItem, WidgetListExpandableTasks> implements ISelectionListener<Entry> {
+public class GuiMainMenu extends GuiListBase<Entry, WidgetListItem, WidgetListTasks> implements ISelectionListener<Entry> {
 
   public static final int COLOR_LIGHT_BLUE=0x3396ff;
   public static final int COLOR_GREEN=0x00FF00;
@@ -34,8 +34,8 @@ public class GuiMainMenu extends GuiListBase<Entry, WidgetListItem, WidgetListEx
   }
 
   @Override
-  protected WidgetListExpandableTasks createListWidget(int listX, int listY) {
-    return new WidgetListExpandableTasks(listX, listY, this.getBrowserWidth(), this.getBrowserHeight(), this);
+  protected WidgetListTasks createListWidget(int listX, int listY) {
+    return new WidgetListTasks(listX, listY, this.getBrowserWidth(), this.getBrowserHeight(), this);
   }
 
   @Override
