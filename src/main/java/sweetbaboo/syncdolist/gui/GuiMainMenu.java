@@ -7,18 +7,19 @@ import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
 import fi.dy.masa.malilib.util.StringUtils;
-import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.Nullable;
 import sweetbaboo.syncdolist.Reference;
+import sweetbaboo.syncdolist.Tasks.Entry;
+import sweetbaboo.syncdolist.Tasks.Step;
 import sweetbaboo.syncdolist.Tasks.Task;
-import sweetbaboo.syncdolist.widgets.WidgetExpandableTask;
 import sweetbaboo.syncdolist.widgets.WidgetListExpandableTasks;
+import sweetbaboo.syncdolist.widgets.WidgetListItem;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class GuiMainMenu extends GuiListBase<Task, WidgetExpandableTask, WidgetListExpandableTasks> implements ISelectionListener<Task> {
+public class GuiMainMenu extends GuiListBase<Entry, WidgetListItem, WidgetListExpandableTasks> implements ISelectionListener<Entry> {
 
   public static final int COLOR_LIGHT_BLUE=0x3396ff;
   public static final int COLOR_GREEN=0x00FF00;
@@ -93,7 +94,7 @@ public class GuiMainMenu extends GuiListBase<Task, WidgetExpandableTask, WidgetL
   }
 
   @Override
-  public void onSelectionChange(@Nullable Task entry) {
+  public void onSelectionChange(@Nullable Entry entry) {
 
   }
 
@@ -117,9 +118,22 @@ public class GuiMainMenu extends GuiListBase<Task, WidgetExpandableTask, WidgetL
 //          editTask(selectedTask);
           break;
         case ADD_TASK:
-//          addTask();
+          addTask();
           break;
       }
+    }
+
+    private void addTask() {
+      List<Step> steps = new ArrayList<>();
+      steps.add(new Step("Build Storage", false));
+      steps.add(new Step("Build Deco", false));
+      steps.add(new Step("Build Farm", false));
+      Task task = new Task("Ice Farm", steps);
+      List<Entry> entries = Task.readTasksFromFile();
+
+      entries.add(task);
+      Task.toJson(entries);
+      this.
     }
 
 //    private void deleteTask(ta)

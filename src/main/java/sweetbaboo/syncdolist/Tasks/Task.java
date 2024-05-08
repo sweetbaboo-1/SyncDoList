@@ -1,4 +1,5 @@
 package sweetbaboo.syncdolist.Tasks;
+
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,33 +10,24 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 
-public class Task {
+public class Task extends Entry{
   private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
   public static final File SAVE_PATH = FabricLoader.getInstance().getConfigDir().resolve("synddolist").toFile();
   public static final String FILENAME = "tasks";
 
-  public String name, author;
-  public Date creationDate;
-  public boolean completed;
   public List<Step> steps;
-  public String[] notes;
   public boolean isExpanded;
 
-  public Task(String name, String author, Date creationDate, boolean completed, List<Step> steps, String[] notes) {
-    this.name=name;
-    this.author=author;
-    this.creationDate = creationDate;
-    this.completed=completed;
+  public Task(String text, List<Step> steps) {
+    super(text, false);
     this.steps=steps;
-    this.notes = notes;
-    this.isExpanded = false;
   }
 
-  public static boolean toJson(List<Task> tasks) {
+  public static boolean toJson(List<Entry> entries) {
     if (!SAVE_PATH.exists()) {
       if (!SAVE_PATH.mkdirs()) {
         SyncDoList.logger.error("Failed to create directory: %s".formatted(SAVE_PATH));
@@ -44,7 +36,7 @@ public class Task {
     }
 
     try (FileWriter writer = new FileWriter(SAVE_PATH + File.separator + FILENAME)) {
-      GSON.toJson(tasks, writer);
+      GSON.toJson(entries, writer);
       return true;
     } catch (IOException e) {
       SyncDoList.logger.error("Error serializing tasks", e);
@@ -52,13 +44,13 @@ public class Task {
     }
   }
 
-  public static List<Task> readTasksFromFile() {
+  public static List<Entry> readTasksFromFile() {
     String filePath = SAVE_PATH + File.separator + FILENAME;
     try (FileReader fileReader = new FileReader(filePath)) {
-      return GSON.fromJson(fileReader, new TypeToken<List<Task>>(){}.getType());
+      return GSON.fromJson(fileReader, new TypeToken<List<Entry>>(){}.getType());
     } catch (IOException e) {
       e.printStackTrace();
-      return null;
+      return new ArrayList<>();
     }
   }
 
@@ -72,6 +64,6 @@ public class Task {
 
   @Override
   public String toString() {
-    return this.name;
+    return this.text;
   }
 }
