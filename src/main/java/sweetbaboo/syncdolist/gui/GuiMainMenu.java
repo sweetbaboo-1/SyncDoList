@@ -9,17 +9,14 @@ import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
 import fi.dy.masa.malilib.util.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import sweetbaboo.syncdolist.Reference;
-import sweetbaboo.syncdolist.Tasks.Entry;
-import sweetbaboo.syncdolist.Tasks.Step;
-import sweetbaboo.syncdolist.Tasks.Task;
-import sweetbaboo.syncdolist.widgets.WidgetListTasks;
-import sweetbaboo.syncdolist.widgets.WidgetListItem;
+import sweetbaboo.syncdolist.entries.Task;
+import sweetbaboo.syncdolist.manager.TaskManager;
+import sweetbaboo.syncdolist.widgets.Task.WidgetListTasks;
+import sweetbaboo.syncdolist.widgets.Task.WidgetTaskItem;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-public class GuiMainMenu extends GuiListBase<Entry, WidgetListItem, WidgetListTasks> implements ISelectionListener<Entry> {
+public class GuiMainMenu extends GuiListBase<Task, WidgetTaskItem, WidgetListTasks> implements ISelectionListener<Task> {
 
   public static final int COLOR_LIGHT_BLUE=0x3396ff;
   public static final int COLOR_GREEN=0x00FF00;
@@ -27,10 +24,13 @@ public class GuiMainMenu extends GuiListBase<Entry, WidgetListItem, WidgetListTa
 
   public static final int OBJECT_HEIGHT=20;
 
+  public TaskManager manager;
+
   public GuiMainMenu() {
     super(12, 30);
     String version=String.format("v%s", Reference.MOD_VERSION);
     this.title=StringUtils.translate("syncdolist.gui.title.main_menu", version);
+    this.manager=TaskManager.getInstance();
   }
 
   @Override
@@ -61,22 +61,12 @@ public class GuiMainMenu extends GuiListBase<Entry, WidgetListItem, WidgetListTa
   }
 
   private void genButtons() {
-    int x = this.width - 12 - this.getButtonWidth();
-    int y = 12;
+    int x=this.width - 12 - this.getButtonWidth();
+    int y=12;
 
     int width=this.getButtonWidth();
-
     this.createChangeMenuButton(x, y, width, ButtonListener.ButtonType.CONFIGURATION);
-
-    x = 12;
-    y = this.height - 30;
-    this.createChangeMenuButton(x, y, width, ButtonListener.ButtonType.ADD_TASK);
-
-    x+=width;
-    this.createChangeMenuButton(x, y, width, ButtonListener.ButtonType.DELETE_TASK);
-
-    x+=width;
-    this.createChangeMenuButton(x, y, width, ButtonListener.ButtonType.EDIT_TASK);
+    this.createChangeMenuButton(12, this.height - 30, width, ButtonListener.ButtonType.ADD_TASK);
   }
 
   private void createChangeMenuButton(int x, int y, int width, ButtonListener.ButtonType type) {
@@ -94,8 +84,8 @@ public class GuiMainMenu extends GuiListBase<Entry, WidgetListItem, WidgetListTa
   }
 
   @Override
-  public void onSelectionChange(@Nullable Entry entry) {
-
+  public void onSelectionChange(@Nullable Task task) {
+    manager.setSelectedTask(task);
   }
 
   public static class ButtonListener implements IButtonActionListener {
@@ -111,37 +101,14 @@ public class GuiMainMenu extends GuiListBase<Entry, WidgetListItem, WidgetListTa
         case CONFIGURATION:
           GuiBase.openGui(new GuiConfigs());
           return;
-        case DELETE_TASK:
-//          deleteTask(selectedTask);
-          break;
-        case EDIT_TASK:
-//          editTask(selectedTask);
-          break;
         case ADD_TASK:
-          addTask();
+          GuiBase.openGui(new GuiCreateTask());
           break;
       }
     }
 
-    private void addTask() {
-      List<Step> steps = new ArrayList<>();
-      steps.add(new Step("Build Storage", false));
-      steps.add(new Step("Build Deco", false));
-      steps.add(new Step("Build Farm", false));
-      Task task = new Task("Ice Farm", steps);
-      List<Entry> entries = Task.readTasksFromFile();
-
-      entries.add(task);
-      Task.toJson(entries);
-      this.
-    }
-
-//    private void deleteTask(ta)
-
     public enum ButtonType {
-      EDIT_TASK("syncdolist.gui.button.change_menu.edit_task"),
       ADD_TASK("syncdolist.gui.button.change_menu.add_task"),
-      DELETE_TASK("syncdolist.gui.button.change_menu.delete_task"),
       CONFIGURATION("syncdolist.gui.button.change_menu.config_menu");
 
       private final String labelKey;
@@ -157,7 +124,6 @@ public class GuiMainMenu extends GuiListBase<Entry, WidgetListItem, WidgetListTa
       public String getDisplayName() {
         return StringUtils.translate(this.getLabelKey());
       }
-
     }
   }
 }

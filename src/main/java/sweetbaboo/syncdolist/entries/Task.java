@@ -1,4 +1,4 @@
-package sweetbaboo.syncdolist.Tasks;
+package sweetbaboo.syncdolist.entries;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -20,14 +20,13 @@ public class Task extends Entry{
   public static final String FILENAME = "tasks";
 
   public List<Step> steps;
-  public boolean isExpanded;
 
-  public Task(String text, List<Step> steps) {
-    super(text, false);
+  public Task(String text, int color, List<Step> steps) {
+    super(text, color);
     this.steps=steps;
   }
 
-  public static boolean toJson(List<Entry> entries) {
+  public static boolean toJson(List<Task> entries) {
     if (!SAVE_PATH.exists()) {
       if (!SAVE_PATH.mkdirs()) {
         SyncDoList.logger.error("Failed to create directory: %s".formatted(SAVE_PATH));
@@ -44,26 +43,27 @@ public class Task extends Entry{
     }
   }
 
-  public static List<Entry> readTasksFromFile() {
+  public static List<Task> readTasksFromFile() {
     String filePath = SAVE_PATH + File.separator + FILENAME;
     try (FileReader fileReader = new FileReader(filePath)) {
-      return GSON.fromJson(fileReader, new TypeToken<List<Entry>>(){}.getType());
+      return GSON.fromJson(fileReader, new TypeToken<List<Task>>(){}.getType());
     } catch (IOException e) {
       e.printStackTrace();
-      return null;
+      return new ArrayList<>();
     }
-  }
-
-  public boolean isExpanded() {
-    return isExpanded;
-  }
-
-  public void setExpanded(boolean expanded) {
-    isExpanded=expanded;
   }
 
   @Override
   public String toString() {
     return this.text;
+  }
+
+  public boolean isCompleted() {
+    for (Step step : steps) {
+      if (!step.completed) {
+        return false;
+      }
+    }
+    return true;
   }
 }
