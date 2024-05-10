@@ -1,13 +1,45 @@
 {
-  "syncdolist.gui.button.config_gui.todolist": "TODO List",
-  "syncdolist.gui.button.config_gui.hotkeys": "Hotkeys",
-  "syncdolist.gui.button.config_gui.additem": "Add Item",
-  "syncdolist.gui.button.config_gui.deletetem": "Delete Item",
-  "syncdolist.gui.button.config_gui.edititem": "Edit Item",
-  "syncdolist.gui.title.main_menu": "SyncDoList",
-  "syncdolist.gui.button.config_gui.back": "Back",
-  "syncdolist.gui.button.change_menu.edit_task": "Edit Task",
-  "syncdolist.gui.button.change_menu.add_task": "Add Task",
-  "syncdolist.gui.button.change_menu.delete_task": "Delete Task",
-  "syncdolist.gui.button.change_menu.config_menu": "Configuration"
+  "syncdolist.gui.button.config_gui.todolist":      "TODO List",
+  "syncdolist.gui.button.config_gui.hotkeys":       "Hotkeys",
+  "syncdolist.gui.button.config_gui.back":          "Back",
+
+  "syncdolist.gui.button.change_menu.add_task":     "Add Task",
+  "syncdolist.gui.button.change_menu.config_menu":  "Configuration",
+  "syncdolist.gui.button.create_task":              "Create",
+  "syncdolist.gui.button.add_step":                 "Add Step",
+
+  "syncdolist.gui.button.task.edit":                "View/Edit",
+  "syncdolist.gui.button.step.note":                "Notes",
+  "syncdolist.gui.button.step.remove":              "§c-§r",
+  "syncdolist.gui.button.step.rename":              "Rename",
+  "syncdolist.gui.button.task.remove":              "Remove",
+  "syncdolist.gui.button.task.archive":             "§aARCHIVE§r",
+  "syncdolist.gui.button.save_task":                "Save",
+
+  "syncdolist.gui.title.main_menu":                 "SyncDoList",
+  "syncdolist.gui.title.edit_task":                 "Edit",
+  "syncdolist.gui.title.add_task":                  "Create",
+
+  "syncdolist.gui.label.task_creation.task_name" :  "Task name",
+  "syncdolist.gui.button.set":                      "Set",
+
+  "syncdolist.error.task.create_task_fail":         "Task must have a name",
+
+  "syncdolist.gui.title.step_note.title":           "Step Notes",
+  "syncdolist.gui.title.step_note.name":           "Step Name",
+  "syncdolist.gui.title.task_note.title":           "Task Notes",
+
+
+  "syncdolist.gui.button.task.up":                  "",
+  "syncdolist.gui.button.task.down":                "",
+  "syncdolist.gui.button.task.complete":            "§aCOMPLETE§r",
+  "syncdolist.gui.button.add_step_notes":           "Edit Task Notes",
+
+
+  "syncdolist.error.task.remove_fail":              "Hold shift to remove",
+  "syncdolist.error.task.archive_fail":             "Hold shift to archive",
+
+  "syncdolist.gui.button.steps.completed":          "Completed: %s",
+  "syncdolist.gui.label_colored.no":                "§cNO§r",
+  "syncdolist.gui.label_colored.yes":               "§aYES§r"
 }

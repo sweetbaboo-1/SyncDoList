@@ -16,12 +16,11 @@ import sweetbaboo.syncdolist.Reference;
 import sweetbaboo.syncdolist.config.Hotkeys;
 
 public class GuiConfigs extends GuiConfigsBase {
-  private static ConfigGuiTab configTab=ConfigGuiTab.BACK;
-
-
+  private static final ConfigGuiTab configTab=ConfigGuiTab.BACK;
 
   public GuiConfigs() {
     super(10, 50, Reference.MOD_ID, null, "syncdolist.gui.button.config_gui.hotkeys");
+    this.setParent(new GuiMainMenu());
   }
 
   @Override
@@ -33,12 +32,12 @@ public class GuiConfigs extends GuiConfigsBase {
     int y=26;
 
     for (ConfigGuiTab tab : ConfigGuiTab.VALUES) {
-      x+=this.createButton(x, y, -1, tab);
+      x+=this.createButton(x, y, tab);
     }
   }
 
-  private int createButton(int x, int y, int width, ConfigGuiTab tab) {
-    ButtonGeneric button=new ButtonGeneric(x, y, width, 20, tab.getDisplayName());
+  private int createButton(int x, int y, ConfigGuiTab tab) {
+    ButtonGeneric button=new ButtonGeneric(x, y, -1, 20, tab.getDisplayName());
     button.setEnabled(true);
     this.addButton(button, new ButtonListener());
     return button.getWidth() + 2;
@@ -52,9 +51,8 @@ public class GuiConfigs extends GuiConfigsBase {
   @Override
   public List<ConfigOptionWrapper> getConfigs() {
     List<? extends IConfigBase> configs;
-    ConfigGuiTab tab=GuiConfigs.configTab;
 
-    if (tab == ConfigGuiTab.BACK) {
+    if (GuiConfigs.configTab == ConfigGuiTab.BACK) {
       configs=Hotkeys.HOTKEY_LIST;
     } else {
       return Collections.emptyList();

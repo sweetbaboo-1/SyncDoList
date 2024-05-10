@@ -52,7 +52,7 @@ public class Configs implements IConfigHandler {
   }
 
   public static class TodoList {
-    public static final ImmutableList<IConfigValue> TODO_LIST_ITEMS=ImmutableList.of();
+    public static final ImmutableList<IConfigValue> TODO_LIST_ITEMS=ImmutableList.of(Hotkeys.OPEN_TODO_LIST);
   }
 }
 

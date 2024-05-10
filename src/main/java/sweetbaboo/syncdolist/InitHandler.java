@@ -3,7 +3,6 @@ package sweetbaboo.syncdolist;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.event.TickHandler;
-import fi.dy.masa.malilib.event.WorldLoadHandler;
 import fi.dy.masa.malilib.interfaces.IInitializationHandler;
 import sweetbaboo.syncdolist.config.Configs;
 import sweetbaboo.syncdolist.event.InputHandler;

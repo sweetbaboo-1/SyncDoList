@@ -9,7 +9,6 @@ import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
 import fi.dy.masa.malilib.interfaces.IClientTickHandler;
 import sweetbaboo.syncdolist.config.Hotkeys;
-import sweetbaboo.syncdolist.gui.GuiConfigs;
 import sweetbaboo.syncdolist.gui.GuiMainMenu;
 
 public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler {
@@ -30,11 +29,10 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler {
 
   @Override
   public boolean onKeyAction(KeyAction action, IKeybind key) {
-    boolean cancel = this.onKeyActionImpl(action, key);
-    return cancel;
+    return this.onKeyActionImpl(key);
   }
 
-  private boolean onKeyActionImpl(KeyAction action, IKeybind key) {
+  private boolean onKeyActionImpl(IKeybind key) {
     MinecraftClient mc = MinecraftClient.getInstance();
 
     if (mc.player == null || mc.world == null) {
