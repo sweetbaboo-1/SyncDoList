@@ -5,15 +5,17 @@ import fi.dy.masa.malilib.gui.Message;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
+import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.gui.widgets.WidgetListEntryBase;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.client.gui.DrawContext;
-import org.jetbrains.annotations.Nullable;
 import sweetbaboo.syncdolist.entries.Task;
-import sweetbaboo.syncdolist.gui.GuiEditView;
 import sweetbaboo.syncdolist.gui.GuiMainMenu;
+import sweetbaboo.syncdolist.gui.GuiTaskView;
+import sweetbaboo.syncdolist.gui.Icons;
 import sweetbaboo.syncdolist.manager.TaskManager;
+import sweetbaboo.syncdolist.widgets.button.IconButton;
 
 public class WidgetTaskItem extends WidgetListEntryBase<Task> {
 
@@ -24,7 +26,7 @@ public class WidgetTaskItem extends WidgetListEntryBase<Task> {
   public TaskManager manager;
 
   public WidgetTaskItem(int x, int y, int width, int height, boolean isOdd,
-                        @Nullable Task task, int listIndex, WidgetListTasks parent) {
+                        Task task, int listIndex, WidgetListTasks parent) {
     super(x, y, width, height, task, listIndex);
     this.parent=parent;
     this.task=task;
@@ -35,13 +37,21 @@ public class WidgetTaskItem extends WidgetListEntryBase<Task> {
     int posY=y + 1;
 
     // Note: These are placed from right to left
-    posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.REMOVE);
-    posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.EDIT);
+    posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.REMOVE, null);
+    posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.VIEW_EDIT, null);
+    posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.COMPLETE, null);
+    posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.DOWN, Icons.ARROW_DOWN);
+    posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.UP, Icons.ARROW_UP);
+
     this.buttonsStartX=posX;
   }
 
-  public int createButtonGeneric(int xRight, int y, ButtonListener.ButtonType type) {
-    return this.addButton(new ButtonGeneric(xRight, y, -1, true, type.getDisplayName()), new ButtonListener(type, this)).getX() - 1;
+  public int createButtonGeneric(int xRight, int y, ButtonListener.ButtonType type, IGuiIcon icon) {
+    if (icon == null) {
+      return this.addButton(new ButtonGeneric(xRight, y, -1, true, type.getDisplayName()), new ButtonListener(type, this)).getX() - 1;
+    } else {
+      return this.addButton(new IconButton(xRight, y, 20, type.getDisplayName(), icon), new ButtonListener(type, this)).getX() - 1;
+    }
   }
 
   @Override
@@ -53,10 +63,8 @@ public class WidgetTaskItem extends WidgetListEntryBase<Task> {
   public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
     RenderUtils.color(1f, 1f, 1f, 1f);
 
-    boolean placementSelected=this.manager.getSelectedTask() == this.entry;
-
     // Draw a lighter background for the hovered and the selected entry
-    if (selected || placementSelected || this.isMouseOver(mouseX, mouseY)) {
+    if (this.isMouseOver(mouseX, mouseY) || selected) {
       RenderUtils.drawRect(this.x, this.y, this.width, this.height, 0xA0707070);
     } else if (this.isOdd) {
       RenderUtils.drawRect(this.x, this.y, this.width, this.height, 0xA0101010);
@@ -66,18 +74,21 @@ public class WidgetTaskItem extends WidgetListEntryBase<Task> {
       RenderUtils.drawRect(this.x, this.y, this.width, this.height, 0xA0303030);
     }
 
-    if (placementSelected) {
+    if (selected) {
       RenderUtils.drawOutline(this.x, this.y, this.width, this.height, 0xFFE0E0E0);
+      if (this.entry != null && !this.entry.getMetaData().equals("")) {
+        GuiMainMenu.drawSelectedEntryMetaData(this.x + this.width + 20, this.height + 33, entry, "Task Notes:", drawContext);
+      }
     }
 
     RenderUtils.color(1, 1, 1, 1);
 
     if (!(this.entry == null)) {
       int yOffset = (this.height - this.fontHeight) / 2 + 1;
-      this.drawStringWithShadow(this.x + 2, this.y + yOffset, this.entry.isCompleted() ? GuiMainMenu.COLOR_GREEN : GuiBase.COLOR_WHITE, this.entry.toString(), drawContext);
+      this.drawStringWithShadow(this.x + 2, this.y + yOffset, this.entry.isCompleted() ? GuiMainMenu.COLOR_GREEN : GuiBase.COLOR_WHITE, this.entry.getText(), drawContext);
     }
 
-    super.render(mouseX, mouseY, placementSelected, drawContext);
+    super.render(mouseX, mouseY, false, drawContext);
   }
 
   public static class ButtonListener implements IButtonActionListener {
@@ -91,30 +102,58 @@ public class WidgetTaskItem extends WidgetListEntryBase<Task> {
 
     @Override
     public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
-      if (this.type == ButtonType.REMOVE) {
-        if (!GuiBase.isShiftDown()) {
-          this.widget.parent.getParentGui().addMessage(Message.MessageType.ERROR, "syncdolist.error.task.remove_fail");
-        } else {
-          this.widget.manager.removeTask(this.widget.task);
+      if (this.widget.entry == null) {
+        return;
+      }
+      switch (this.type) {
+        case UP -> {
+          this.widget.manager.moveTaskUp(this.widget.task);
           this.widget.parent.refreshEntries();
         }
-      } else if (this.type == ButtonType.EDIT) {
-        GuiBase.openGui(new GuiEditView());
+        case DOWN -> {
+          this.widget.manager.moveTaskDown(this.widget.task);
+          this.widget.parent.refreshEntries();
+        }
+        case REMOVE -> {
+          if (!GuiBase.isShiftDown()) {
+            this.widget.parent.getParentGui().addMessage(Message.MessageType.ERROR, "syncdolist.error.task.remove_fail");
+          } else {
+            this.widget.manager.removeTask(this.widget.task);
+            this.widget.parent.refreshEntries();
+          }
+        }
+        case ARCHIVE -> {
+          if (!GuiBase.isShiftDown()) {
+            this.widget.parent.getParentGui().addMessage(Message.MessageType.ERROR, "syncdolist.error.task.archive_fail");
+          } else {
+            Task.archived(this.widget.task);
+            this.widget.manager.removeTask(this.widget.task);
+            this.widget.parent.refreshEntries();
+          }
+        }
+        case COMPLETE -> {
+          this.widget.manager.complete(this.widget.task);
+          this.widget.parent.refreshEntries();
+        }
+        case VIEW_EDIT -> {
+          this.widget.manager.setSelectedTask(this.widget.task);
+          GuiBase.openGui(new GuiTaskView(this.widget.task, new GuiMainMenu()));
+        }
       }
     }
 
     public enum ButtonType {
-      EDIT("syncdolist.gui.button.task.edit"),
-      REMOVE("syncdolist.gui.button.task.remove");
+      VIEW_EDIT("syncdolist.gui.button.task.edit"),
+      REMOVE("syncdolist.gui.button.task.remove"),
+      UP("syncdolist.gui.button.task.up"),
+      DOWN("syncdolist.gui.button.task.down"),
+      COMPLETE("syncdolist.gui.button.task.complete"),
+      ARCHIVE("syncdolist.gui.button.task.archive");
 
       private final String translationKey;
 
       ButtonType(String translationKey) {
         this.translationKey=translationKey;
-      }
-
-      public String getTranslationKey() {
-        return this.translationKey;
       }
 
       public String getDisplayName() {

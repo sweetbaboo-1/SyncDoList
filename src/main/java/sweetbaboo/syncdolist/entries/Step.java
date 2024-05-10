@@ -1,14 +1,21 @@
 package sweetbaboo.syncdolist.entries;
 
-import sweetbaboo.syncdolist.gui.GuiMainMenu;
+public class Step extends Entry {
 
-public class Step extends Entry{
+  public boolean completed;
 
-  protected boolean completed;
-
-  public Step(String text, boolean completed) {
-    super(text, completed ? GuiMainMenu.COLOR_GREEN : GuiMainMenu.COLOR_WHITE);
+  public Step(String text, boolean completed, String metaData) {
+    super(text, metaData);
     this.completed = completed;
+  }
+
+  public Step() {
+    this.completed = false;
+  }
+
+  @Override
+  public String toString() {
+    return text;
   }
 
   public boolean isCompleted() {

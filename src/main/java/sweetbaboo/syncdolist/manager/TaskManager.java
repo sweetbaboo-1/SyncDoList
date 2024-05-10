@@ -1,5 +1,6 @@
 package sweetbaboo.syncdolist.manager;
 
+import sweetbaboo.syncdolist.entries.Step;
 import sweetbaboo.syncdolist.entries.Task;
 
 import javax.annotation.Nullable;
@@ -10,11 +11,11 @@ public class TaskManager {
   private Task selectedTask;
   private static TaskManager instance;
 
-  private List<Task> tasks;
+  private final List<Task> tasks;
 
   private TaskManager() {
     selectedTask = null;
-    tasks = Task.readTasksFromFile();
+    tasks = Task.readTasksFromFile(false);
   }
 
 
@@ -39,17 +40,78 @@ public class TaskManager {
     return tasks;
   }
 
-  public boolean removeTask(Task task) {
+  public void removeTask(Task task) {
     if (selectedTask == task) {
       selectedTask = null;
     }
-    return tasks.remove(task);
+    tasks.remove(task);
   }
 
-  public boolean addTask(Task task) {
+  public void addTask(Task task) {
     if (!this.tasks.contains(task)) {
-      return this.tasks.add(task);
+      this.tasks.add(task);
     }
-    return false;
+  }
+
+  public void complete(Task task) {
+    for (var step : task.getSteps()) {
+      step.setCompleted(true);
+    }
+  }
+
+  private <T> void swap(List<T> list, int index, int i) {
+    T temp = list.get(index);
+    list.set(index, list.get(i));
+    list.set(i, temp);
+  }
+
+  public void moveTaskUp(Task task) {
+    int index = tasks.indexOf(task);
+    if (index > 0) {
+      swap(tasks, index, index - 1);
+    }
+  }
+
+  public void moveStepUp(Step step) {
+    if (getSelectedTask() != null) {
+      int index=getSelectedTask().getSteps().indexOf(step);
+      if (index > 0) {
+        swap(getSelectedTask().getSteps(), index, index - 1);
+      }
+    }
+  }
+
+  public void moveStepUp(Step step, Task task) {
+    if (task != null) {
+      int index=task.getSteps().indexOf(step);
+      if (index > 0) {
+        swap(task.getSteps(), index, index - 1);
+      }
+    }
+  }
+
+  public void moveTaskDown(Task task) {
+    int index = tasks.indexOf(task);
+    if (index < tasks.size() - 1) {
+      swap(tasks, index, index + 1);
+    }
+  }
+
+  public void moveStepDown(Step step) {
+    if (getSelectedTask() != null) {
+      int index = getSelectedTask().getSteps().indexOf(step);
+      if (index < getSelectedTask().getSteps().size() - 1) {
+        swap(getSelectedTask().getSteps(), index, index + 1);
+      }
+    }
+  }
+
+  public void moveStepDown(Step step, Task task) {
+    if (task != null) {
+      int index = task.getSteps().indexOf(step);
+      if (index < task.getSteps().size() - 1) {
+        swap(task.getSteps(), index, index + 1);
+      }
+    }
   }
 }

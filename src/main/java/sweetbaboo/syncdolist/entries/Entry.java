@@ -2,27 +2,31 @@ package sweetbaboo.syncdolist.entries;
 
 public abstract class Entry {
   protected String text;
-  protected int color;
+  protected String metaData;
 
-  public Entry(String text, int color) {
+  public Entry(String text, String metaData) {
     this.text=text;
-    this.color = color;
+    this.metaData = metaData;
   }
 
-  public int getColor() {
-    return color;
-  }
-
-  public void setColor(int color) {
-    this.color=color;
+  public Entry() {
+    this.text = "";
+    this.metaData = "";
   }
 
   public String getText() {
     return text;
   }
 
+  public String getMetaData() {
+    return metaData;
+  }
+
+  public void setMetaData(String metaData) {
+    this.metaData=metaData;
+  }
+
   public void setText(String text) {
     this.text=text;
   }
-
 }

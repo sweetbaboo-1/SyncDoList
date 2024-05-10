@@ -6,22 +6,28 @@ import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
+import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.Nullable;
 import sweetbaboo.syncdolist.Reference;
+import sweetbaboo.syncdolist.entries.Entry;
 import sweetbaboo.syncdolist.entries.Task;
 import sweetbaboo.syncdolist.manager.TaskManager;
 import sweetbaboo.syncdolist.widgets.Task.WidgetListTasks;
 import sweetbaboo.syncdolist.widgets.Task.WidgetTaskItem;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class GuiMainMenu extends GuiListBase<Task, WidgetTaskItem, WidgetListTasks> implements ISelectionListener<Task> {
 
-  public static final int COLOR_LIGHT_BLUE=0x3396ff;
-  public static final int COLOR_GREEN=0x00FF00;
-  public static final int COLOR_RED=0xFF0000;
+  public static final int COLOR_GREEN=0x54FC54;
+  public static final int COLOR_RED=0xFC5454;
 
+  public static final int INFO_WIDTH=150;
   public static final int OBJECT_HEIGHT=20;
 
   public TaskManager manager;
@@ -29,23 +35,13 @@ public class GuiMainMenu extends GuiListBase<Task, WidgetTaskItem, WidgetListTas
   public GuiMainMenu() {
     super(12, 30);
     String version=String.format("v%s", Reference.MOD_VERSION);
-    this.title=StringUtils.translate("syncdolist.gui.title.main_menu", version);
+    this.title=StringUtils.translate("syncdolist.gui.title.main_menu", version) + " => Tasks";
     this.manager=TaskManager.getInstance();
   }
 
   @Override
   protected WidgetListTasks createListWidget(int listX, int listY) {
     return new WidgetListTasks(listX, listY, this.getBrowserWidth(), this.getBrowserHeight(), this);
-  }
-
-  @Override
-  protected int getBrowserWidth() {
-    return this.width - 20;
-  }
-
-  @Override
-  protected int getBrowserHeight() {
-    return this.height - 64;
   }
 
   @Override
@@ -56,31 +52,22 @@ public class GuiMainMenu extends GuiListBase<Task, WidgetTaskItem, WidgetListTas
 
   @Override
   protected void closeGui(boolean showParent) {
-    Task.toJson(Objects.requireNonNull(this.getListWidget()).getCurrentEntries());
+    Task.toJson(Objects.requireNonNull(this.getListWidget()).getCurrentEntries(), false);
     super.closeGui(showParent);
   }
 
   private void genButtons() {
-    int x=this.width - 12 - this.getButtonWidth();
+    int x=this.width - 15 - this.getStringWidth(ButtonListener.ButtonType.CONFIGURATION.getDisplayName());
     int y=12;
 
-    int width=this.getButtonWidth();
-    this.createChangeMenuButton(x, y, width, ButtonListener.ButtonType.CONFIGURATION);
-    this.createChangeMenuButton(12, this.height - 30, width, ButtonListener.ButtonType.ADD_TASK);
+    this.createChangeMenuButton(x, y, ButtonListener.ButtonType.CONFIGURATION);
+    this.createChangeMenuButton(12, this.height - 30, ButtonListener.ButtonType.ADD_TASK);
   }
 
-  private void createChangeMenuButton(int x, int y, int width, ButtonListener.ButtonType type) {
-    ButtonGeneric button=new ButtonGeneric(x, y, width, OBJECT_HEIGHT, type.getDisplayName());
-    this.addButton(button, new ButtonListener(type));
-  }
-
-  private int getButtonWidth() {
-    int width=0;
-
-    for (ButtonListener.ButtonType type : ButtonListener.ButtonType.values()) {
-      width=Math.max(width, this.getStringWidth(type.getDisplayName()) + 30);
-    }
-    return width;
+  @Override
+  public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+    RenderUtils.drawOutlinedBox(this.getListX() + this.getBrowserWidth() + 6, this.getListY() + 22, GuiMainMenu.INFO_WIDTH, getMaxInfoHeight(), 0xA0000000, GuiBase.COLOR_HORIZONTAL_BAR);
+    super.render(drawContext, mouseX, mouseY, partialTicks);
   }
 
   @Override
@@ -90,20 +77,20 @@ public class GuiMainMenu extends GuiListBase<Task, WidgetTaskItem, WidgetListTas
 
   public static class ButtonListener implements IButtonActionListener {
     private final ButtonType type;
+    private final GuiBase parent;
 
-    public ButtonListener(ButtonType type) {
+    public ButtonListener(ButtonType type, GuiBase parent) {
       this.type=type;
+      this.parent = parent;
     }
 
     @Override
     public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
       switch (this.type) {
-        case CONFIGURATION:
+        case CONFIGURATION -> {
           GuiBase.openGui(new GuiConfigs());
-          return;
-        case ADD_TASK:
-          GuiBase.openGui(new GuiCreateTask());
-          break;
+        }
+        case ADD_TASK -> GuiBase.openGui(new GuiCreateTask(this.parent));
       }
     }
 
@@ -125,5 +112,72 @@ public class GuiMainMenu extends GuiListBase<Task, WidgetTaskItem, WidgetListTas
         return StringUtils.translate(this.getLabelKey());
       }
     }
+  }
+
+  @Override
+  protected int getBrowserWidth() {
+    return this.width - 175;
+  }
+
+  @Override
+  protected int getBrowserHeight() {
+    return this.height - 64;
+  }
+
+  private void createChangeMenuButton(int x, int y, ButtonListener.ButtonType type) {
+    ButtonGeneric button=new ButtonGeneric(x, y, -1, OBJECT_HEIGHT, type.getDisplayName());
+    this.addButton(button, new ButtonListener(type, this));
+  }
+
+  public static List<String> divideString(String input, int maxWidth) {
+    if (input == null) {
+      return new ArrayList<>();
+    }
+    List<String> dividedStrings = new ArrayList<>();
+    String[] words = input.split("\\s+");
+    StringBuilder currentLine = new StringBuilder();
+
+    for (String word : words) {
+      if (currentLine.length() == 0) {
+        currentLine.append(word);
+      } else {
+        String testLine = currentLine + " " + word;
+        int width = StringUtils.getStringWidth(testLine);
+        if (width <= maxWidth) {
+          currentLine.append(" ").append(word);
+        } else {
+          dividedStrings.add(currentLine.toString());
+          currentLine = new StringBuilder(word);
+        }
+      }
+    }
+
+    if (currentLine.length() > 0) {
+      dividedStrings.add(currentLine.toString());
+    }
+
+    return dividedStrings;
+  }
+
+  public static void drawSelectedEntryMetaData(int x, int y, Entry entry, String title, DrawContext drawContext) {
+    if (entry == null) {
+      return;
+    }
+
+    var mc = MinecraftClient.getInstance();
+    var textRenderer = mc.textRenderer;
+
+    int textColor=0xC0C0C0C0;
+    drawContext.drawText(textRenderer, title, x, y, textColor, false);
+    y+=12;
+
+    for (String str : GuiMainMenu.divideString(entry.getMetaData(), GuiMainMenu.INFO_WIDTH)) {
+      drawContext.drawText(textRenderer, str, x, y, textColor, false);
+      y+=12;
+    }
+  }
+
+  public int getMaxInfoHeight() {
+    return this.getBrowserHeight();
   }
 }
