@@ -13,7 +13,6 @@ import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.client.gui.DrawContext;
 import sweetbaboo.syncdolist.entries.Step;
-import sweetbaboo.syncdolist.entries.Task;
 import sweetbaboo.syncdolist.gui.GuiMainMenu;
 import sweetbaboo.syncdolist.gui.Icons;
 import sweetbaboo.syncdolist.manager.TaskManager;
@@ -44,7 +43,7 @@ public class WidgetStepItem extends WidgetListEntryBase<Step> {
 
     // Note: These are placed from right to left
     posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.REMOVE, null);
-    posX=this.createButtonYesNo(posX, posY, Objects.requireNonNull(this.getEntry()).isCompleted(), ButtonListener.ButtonType.TOGGLE_COMPLETED);
+    posX=this.createButtonYesNo(posX, posY, Objects.requireNonNull(this.getEntry()).isCompleted(), ButtonListener.ButtonType.TOGGLE_COMPLETED) - 1;
     posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.NOTE, null);
     posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.RENAME, null);
     posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.DOWN, Icons.ARROW_DOWN);
@@ -99,7 +98,7 @@ public class WidgetStepItem extends WidgetListEntryBase<Step> {
 
   public int createButtonYesNo(int xRight, int y, boolean isCurrentlyOn, ButtonListener.ButtonType type) {
     ButtonYesNo button=new ButtonYesNo(xRight, y, -1, true, type.getTranslationKey(), isCurrentlyOn);
-    return this.addButton(button, new ButtonListener(type, this)).getX() - 2;
+    return this.addButton(button, new ButtonListener(type, this)).getX() - 1;
   }
 
   public static class ButtonListener implements IButtonActionListener {

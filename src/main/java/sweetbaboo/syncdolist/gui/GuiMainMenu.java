@@ -15,12 +15,11 @@ import sweetbaboo.syncdolist.Reference;
 import sweetbaboo.syncdolist.entries.Entry;
 import sweetbaboo.syncdolist.entries.Task;
 import sweetbaboo.syncdolist.manager.TaskManager;
-import sweetbaboo.syncdolist.widgets.Task.WidgetListTasks;
-import sweetbaboo.syncdolist.widgets.Task.WidgetTaskItem;
+import sweetbaboo.syncdolist.widgets.task.WidgetListTasks;
+import sweetbaboo.syncdolist.widgets.task.WidgetTaskItem;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class GuiMainMenu extends GuiListBase<Task, WidgetTaskItem, WidgetListTasks> implements ISelectionListener<Task> {
 
@@ -36,7 +35,7 @@ public class GuiMainMenu extends GuiListBase<Task, WidgetTaskItem, WidgetListTas
     super(12, 30);
     String version=String.format("v%s", Reference.MOD_VERSION);
     this.title=StringUtils.translate("syncdolist.gui.title.main_menu", version) + " => Tasks";
-    this.manager=TaskManager.getInstance();
+    this.manager = TaskManager.refreshInstance();
   }
 
   @Override
@@ -52,7 +51,7 @@ public class GuiMainMenu extends GuiListBase<Task, WidgetTaskItem, WidgetListTas
 
   @Override
   protected void closeGui(boolean showParent) {
-    Task.toJson(Objects.requireNonNull(this.getListWidget()).getCurrentEntries(), false);
+    Task.toJson(manager.getTasks(), false);
     super.closeGui(showParent);
   }
 
@@ -88,7 +87,7 @@ public class GuiMainMenu extends GuiListBase<Task, WidgetTaskItem, WidgetListTas
     public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
       switch (this.type) {
         case CONFIGURATION -> {
-          GuiBase.openGui(new GuiConfigs());
+          GuiBase.openGui(new GuiConfigs(this.parent));
         }
         case ADD_TASK -> GuiBase.openGui(new GuiCreateTask(this.parent));
       }

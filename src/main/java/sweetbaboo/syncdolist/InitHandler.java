@@ -20,7 +20,6 @@ public class InitHandler implements IInitializationHandler
     InputEventHandler.getInputManager().registerKeyboardInputHandler(handler);
     InputEventHandler.getInputManager().registerMouseInputHandler(handler);
 
-
     TickHandler.getInstance().registerClientTickHandler(KeybindCallbacks.getInstance());
     KeybindCallbacks.getInstance().setCallbacks();
   }

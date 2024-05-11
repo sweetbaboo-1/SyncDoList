@@ -10,8 +10,7 @@ public class SyncDoList implements ModInitializer {
 	public static final Logger logger = LogManager.getLogger(Reference.MOD_ID);
 
 	@Override
-	public void onInitialize()
-	{
+	public void onInitialize() {
 		InitializationHandler.getInstance().registerInitializationHandler(new InitHandler());
 	}
 }

@@ -18,7 +18,6 @@ public class TaskManager {
     tasks = Task.readTasksFromFile(false);
   }
 
-
   public static TaskManager getInstance() {
     if (instance == null) {
       instance = new TaskManager();
@@ -30,6 +29,12 @@ public class TaskManager {
     if (task == null || this.tasks.contains(task)) {
       this.selectedTask = task;
     }
+  }
+
+  public static TaskManager refreshInstance() {
+    instance = null;
+    instance = getInstance();
+    return instance;
   }
 
   public Task getSelectedTask() {

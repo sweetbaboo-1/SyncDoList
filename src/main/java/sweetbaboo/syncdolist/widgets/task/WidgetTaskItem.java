@@ -1,4 +1,4 @@
-package sweetbaboo.syncdolist.widgets.Task;
+package sweetbaboo.syncdolist.widgets.task;
 
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.Message;
@@ -25,8 +25,7 @@ public class WidgetTaskItem extends WidgetListEntryBase<Task> {
   public int buttonsStartX;
   public TaskManager manager;
 
-  public WidgetTaskItem(int x, int y, int width, int height, boolean isOdd,
-                        Task task, int listIndex, WidgetListTasks parent) {
+  public WidgetTaskItem(int x, int y, int width, int height, boolean isOdd, Task task, int listIndex, WidgetListTasks parent) {
     super(x, y, width, height, task, listIndex);
     this.parent=parent;
     this.task=task;
@@ -137,7 +136,7 @@ public class WidgetTaskItem extends WidgetListEntryBase<Task> {
         }
         case VIEW_EDIT -> {
           this.widget.manager.setSelectedTask(this.widget.task);
-          GuiBase.openGui(new GuiTaskView(this.widget.task, new GuiMainMenu()));
+          GuiBase.openGui(new GuiTaskView(this.widget.task, this.widget.parent.parent));
         }
       }
     }

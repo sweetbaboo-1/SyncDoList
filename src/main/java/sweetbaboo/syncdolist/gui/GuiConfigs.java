@@ -18,9 +18,9 @@ import sweetbaboo.syncdolist.config.Hotkeys;
 public class GuiConfigs extends GuiConfigsBase {
   private static final ConfigGuiTab configTab=ConfigGuiTab.BACK;
 
-  public GuiConfigs() {
+  public GuiConfigs(GuiBase parent) {
     super(10, 50, Reference.MOD_ID, null, "syncdolist.gui.button.config_gui.hotkeys");
-    this.setParent(new GuiMainMenu());
+    this.setParent(parent);
   }
 
   @Override
@@ -39,7 +39,7 @@ public class GuiConfigs extends GuiConfigsBase {
   private int createButton(int x, int y, ConfigGuiTab tab) {
     ButtonGeneric button=new ButtonGeneric(x, y, -1, 20, tab.getDisplayName());
     button.setEnabled(true);
-    this.addButton(button, new ButtonListener());
+    this.addButton(button, new ButtonListener(this));
     return button.getWidth() + 2;
   }
 
@@ -77,9 +77,15 @@ public class GuiConfigs extends GuiConfigsBase {
   }
 
   private static class ButtonListener implements IButtonActionListener {
+    private GuiBase parent;
+
+    public ButtonListener(GuiBase parent) {
+      this.parent = parent;
+    }
+
     @Override
     public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
-      GuiBase.openGui(new GuiMainMenu());
+      GuiBase.openGui(parent);
     }
   }
 }

@@ -1,4 +1,4 @@
-package sweetbaboo.syncdolist.widgets.Task;
+package sweetbaboo.syncdolist.widgets.task;
 
 import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.gui.LeftRight;
@@ -44,7 +44,11 @@ public class WidgetListTasks extends WidgetListBase<Task, WidgetTaskItem> {
   @Override
   protected List<String> getEntryStringsForFilter(Task entry) {
     if (entry.getText() != null) {
-      return ImmutableList.of(entry.getText().toLowerCase());
+      if (!entry.getMetaData().equals("")) {
+        return ImmutableList.of(entry.getText().toLowerCase(), entry.getMetaData().toLowerCase());
+      } else {
+        return ImmutableList.of(entry.getText().toLowerCase());
+      }
     }
     return super.getEntryStringsForFilter(entry);
   }
