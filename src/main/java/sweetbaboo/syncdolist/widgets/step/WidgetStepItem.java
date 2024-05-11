@@ -7,7 +7,6 @@ import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.gui.widgets.WidgetListEntryBase;
-import fi.dy.masa.malilib.interfaces.IStringConsumer;
 import fi.dy.masa.malilib.interfaces.IStringConsumerFeedback;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
@@ -42,8 +41,8 @@ public class WidgetStepItem extends WidgetListEntryBase<Step> {
     int posY=y + 1;
 
     // Note: These are placed from right to left
-    posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.REMOVE, null);
-    posX=this.createButtonYesNo(posX, posY, Objects.requireNonNull(this.getEntry()).isCompleted(), ButtonListener.ButtonType.TOGGLE_COMPLETED) - 1;
+    posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.REMOVE, null) + 1;
+    posX=this.createButtonYesNo(posX, posY, Objects.requireNonNull(this.getEntry()).isCompleted(), ButtonListener.ButtonType.TOGGLE_COMPLETED);
     posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.NOTE, null);
     posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.RENAME, null);
     posX=this.createButtonGeneric(posX, posY, ButtonListener.ButtonType.DOWN, Icons.ARROW_DOWN);
