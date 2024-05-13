@@ -8,13 +8,17 @@ import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.Nullable;
 import sweetbaboo.syncdolist.Reference;
+import sweetbaboo.syncdolist.Utils;
 import sweetbaboo.syncdolist.entries.Entry;
 import sweetbaboo.syncdolist.entries.Task;
 import sweetbaboo.syncdolist.manager.TaskManager;
+import sweetbaboo.syncdolist.network.ModMessages;
 import sweetbaboo.syncdolist.widgets.task.WidgetListTasks;
 import sweetbaboo.syncdolist.widgets.task.WidgetTaskItem;
 
@@ -51,8 +55,9 @@ public class GuiMainMenu extends GuiListBase<Task, WidgetTaskItem, WidgetListTas
 
   @Override
   protected void closeGui(boolean showParent) {
-    Task.toJson(manager.getTasks(), false);
+    Utils.toJson(manager.getTasks(), false);
     super.closeGui(showParent);
+//    ClientPlayNetworking.send(ModMessages.SAVE_TASKS_ID, PacketByteBufs.create());
   }
 
   private void genButtons() {

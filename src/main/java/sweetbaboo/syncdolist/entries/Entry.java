@@ -1,8 +1,11 @@
 package sweetbaboo.syncdolist.entries;
 
+import sweetbaboo.syncdolist.network.Locks.Lock;
+
 public abstract class Entry {
   protected String text;
   protected String metaData;
+  protected Lock textLock, metaDataLock;
 
   public Entry(String text, String metaData) {
     this.text=text;
@@ -28,5 +31,21 @@ public abstract class Entry {
 
   public void setText(String text) {
     this.text=text;
+  }
+
+  public Lock getTextLock() {
+    return textLock;
+  }
+
+  public void setTextLock(Lock textLock) {
+    this.textLock=textLock;
+  }
+
+  public Lock getMetaDataLock() {
+    return metaDataLock;
+  }
+
+  public void setMetaDataLock(Lock metaDataLock) {
+    this.metaDataLock=metaDataLock;
   }
 }

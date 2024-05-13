@@ -120,7 +120,8 @@ public class WidgetStepItem extends WidgetListEntryBase<Step> {
       @Override
       public boolean setString(String string)
       {
-        step.setMetaData(string);
+        if (step != null)
+          step.setMetaData(string);
         return true;
       }
     }

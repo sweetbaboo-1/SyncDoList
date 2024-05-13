@@ -1,5 +1,6 @@
 package sweetbaboo.syncdolist.manager;
 
+import sweetbaboo.syncdolist.Utils;
 import sweetbaboo.syncdolist.entries.Step;
 import sweetbaboo.syncdolist.entries.Task;
 
@@ -15,7 +16,7 @@ public class TaskManager {
 
   private TaskManager() {
     selectedTask = null;
-    tasks = Task.readTasksFromFile(false);
+    tasks = Utils.readTasksFromFile(false);
   }
 
   public static TaskManager getInstance() {
@@ -77,15 +78,6 @@ public class TaskManager {
     }
   }
 
-  public void moveStepUp(Step step) {
-    if (getSelectedTask() != null) {
-      int index=getSelectedTask().getSteps().indexOf(step);
-      if (index > 0) {
-        swap(getSelectedTask().getSteps(), index, index - 1);
-      }
-    }
-  }
-
   public void moveStepUp(Step step, Task task) {
     if (task != null) {
       int index=task.getSteps().indexOf(step);
@@ -99,15 +91,6 @@ public class TaskManager {
     int index = tasks.indexOf(task);
     if (index < tasks.size() - 1) {
       swap(tasks, index, index + 1);
-    }
-  }
-
-  public void moveStepDown(Step step) {
-    if (getSelectedTask() != null) {
-      int index = getSelectedTask().getSteps().indexOf(step);
-      if (index < getSelectedTask().getSteps().size() - 1) {
-        swap(getSelectedTask().getSteps(), index, index + 1);
-      }
     }
   }
 

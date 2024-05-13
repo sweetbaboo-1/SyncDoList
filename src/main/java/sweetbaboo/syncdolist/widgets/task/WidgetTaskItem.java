@@ -10,6 +10,7 @@ import fi.dy.masa.malilib.gui.widgets.WidgetListEntryBase;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.client.gui.DrawContext;
+import sweetbaboo.syncdolist.Utils;
 import sweetbaboo.syncdolist.entries.Task;
 import sweetbaboo.syncdolist.gui.GuiMainMenu;
 import sweetbaboo.syncdolist.gui.GuiTaskView;
@@ -125,7 +126,7 @@ public class WidgetTaskItem extends WidgetListEntryBase<Task> {
           if (!GuiBase.isShiftDown()) {
             this.widget.parent.getParentGui().addMessage(Message.MessageType.ERROR, "syncdolist.error.task.archive_fail");
           } else {
-            Task.archived(this.widget.task);
+            Utils.archived(this.widget.task);
             this.widget.manager.removeTask(this.widget.task);
             this.widget.parent.refreshEntries();
           }

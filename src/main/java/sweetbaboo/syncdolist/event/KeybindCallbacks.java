@@ -1,6 +1,8 @@
 package sweetbaboo.syncdolist.event;
 
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.gui.GuiBase;
@@ -10,6 +12,7 @@ import fi.dy.masa.malilib.hotkeys.KeyAction;
 import fi.dy.masa.malilib.interfaces.IClientTickHandler;
 import sweetbaboo.syncdolist.config.Hotkeys;
 import sweetbaboo.syncdolist.gui.GuiMainMenu;
+import sweetbaboo.syncdolist.network.ModMessages;
 
 public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler {
   private static final KeybindCallbacks INSTANCE = new KeybindCallbacks();
@@ -43,6 +46,7 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler {
       GuiBase.openGui(new GuiMainMenu());
       return true;
     }
+
     return false;
   }
 

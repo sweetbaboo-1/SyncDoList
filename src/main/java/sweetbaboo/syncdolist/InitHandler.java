@@ -7,6 +7,7 @@ import fi.dy.masa.malilib.interfaces.IInitializationHandler;
 import sweetbaboo.syncdolist.config.Configs;
 import sweetbaboo.syncdolist.event.InputHandler;
 import sweetbaboo.syncdolist.event.KeybindCallbacks;
+import sweetbaboo.syncdolist.network.ModMessages;
 
 public class InitHandler implements IInitializationHandler
 {
